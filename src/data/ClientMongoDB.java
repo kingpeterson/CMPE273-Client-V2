@@ -155,6 +155,28 @@ public class ClientMongoDB {
     	return found;
     }
     
+    public static int write(String objectID, String instance, String field, String value){
+    	if (db == null)
+    		init();
+    	WriteResult result = null;
+		try{
+	        DBCollection collection = db.getCollection("deviceStorage");
+	        DBObject updateData = new BasicDBObject();
+	        updateData.put("$set", new BasicDBObject(field, value));
+	        BasicDBObject query = new BasicDBObject();
+	        List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
+	        obj.add(new BasicDBObject("ObjectID", objectID));
+	        obj.add(new BasicDBObject("SerialNumber", instance));
+	        query.put("$and", obj);
+	    	result = collection.update(query, updateData);
+		}catch (MongoException e) {
+			e.printStackTrace();
+		}
+    	
+    	
+    	return result.getN();
+    }
+    
 //    public static int delete(String objectID, String newInstance){
 //    	if (db == null)
 //    		init();

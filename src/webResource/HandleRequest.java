@@ -45,10 +45,16 @@ public class HandleRequest {
 	@POST
 	@Path("Write")
 	public Response Write(String input){
-		String result = "";
+		String result = "failed";
 		try{
 			JSONObject obj = new JSONObject(input);
 			String objectID = obj.getString("ObjectID");
+			String instance = obj.getString("Instance");
+			String field = obj.getString("Field");
+			String value = obj.getString("Value");
+			int status = ClientMongoDB.write(objectID, instance, field, value);
+			if (status == 1)
+				result= "success";
 		}catch (Exception e){
 			e.printStackTrace();
 		}

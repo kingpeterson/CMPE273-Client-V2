@@ -46,7 +46,7 @@ public class Lightbulb {
     }
     
     public static String getObjectID() {
-    	return "0000000000010001";
+    	return "PhilipsLightBulb";
     }
 
     public static String getModelNumber() {
@@ -54,7 +54,7 @@ public class Lightbulb {
     }
 
     public static String getSerialNumber() {
-        return "KP-911-000-0001";
+        return "PHILIPS-000-0001";
     }
 
     public static String getFirmwareVersion() {
@@ -185,11 +185,11 @@ public class Lightbulb {
 		System.out.println("Press 5 to Use service\n");
 	}
 	
-	public static String update(String objectID, String newInstance, String newValue){
+	public static String update(String objectID, String newInstance, int status){
 		updateURI = ClientMongoDB.search("updateURI");
 		Client client = Client.create();
 		WebResource webResource = client.resource(updateURI);
-		String clientInfo = "{\"ObjectID\": \""+objectID+"\", \"NewInstance\": \""+newInstance+"\", \"NewValue\": \""+newValue+"\"}";
+		String clientInfo = "{\"ObjectID\": \""+objectID+"\", \"NewInstance\": \""+newInstance+"\", \"Status\": \""+status+"\"}";
 		ClientResponse response = webResource.type("application/json").post(ClientResponse.class, clientInfo);
 		if(response.getStatus() != 201){
 			throw new RuntimeException("Failed HTTP error code:" + response.getStatus());

@@ -84,41 +84,74 @@ public class ClientMongoDB {
         collection.remove(object);
     }
     
-    public static int create(String objectID, String newInstance, String newValue){
+    public static int update(String objectID, String newInstance, int status){
     	if (db == null)
     		init();
     	WriteResult result = null;
 		try{
 	        DBCollection collection = db.getCollection("deviceStorage");
-	        DBObject updateData = new BasicDBObject();
-	        updateData.put("$set", new BasicDBObject(newInstance, newValue));
-	     
-	        BasicDBObject query = new BasicDBObject();
-	        List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
-	        obj.add(new BasicDBObject("ObjectID", objectID));
-	        query.put("$and", obj);
-	    	result = collection.update(query, updateData);
+			if (status == 1){
+				String data = "{\"ObjectID\": \""+objectID+"\", \"SerialNumber\": \""+newInstance+"\"}";
+		    	DBObject object = (DBObject)JSON.parse(data);
+		    	result = collection.insert(object);
+			}
+			else{
+		        BasicDBObject query = new BasicDBObject();
+		        List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
+		        obj.add(new BasicDBObject("ObjectID", objectID));
+		        obj.add(new BasicDBObject("SerialNumber", newInstance));
+		        query.put("$and", obj);
+		        result = collection.remove(query);
+			}
+//	        DBObject updateData = new BasicDBObject();
+//	        updateData.put("$set", new BasicDBObject(newInstance, newValue));
+//	     
+//	        BasicDBObject query = new BasicDBObject();
+//	        List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
+//	        obj.add(new BasicDBObject("ObjectID", objectID));
+//	        query.put("$and", obj);
+//	    	result = collection.update(query, updateData);
 		} catch (MongoException e) {
 			e.printStackTrace();
 		}
     	return result.getN();
     }
     
-    public static int delete(String objectID, String newInstance){
+    public static int action(String objectID, String action, String behavior){
     	if (db == null)
     		init();
     	WriteResult result = null;
 		try{
 	        DBCollection collection = db.getCollection("deviceStorage");
 	        DBObject updateData = new BasicDBObject();
-	        updateData.put("$unset", new BasicDBObject(newInstance, ""));
-	        DBObject query = new BasicDBObject("ObjectID", objectID);
+	        updateData.put("$set", new BasicDBObject(action, behavior));
+	     
+	        BasicDBObject query = new BasicDBObject();
+	        List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
+	        obj.add(new BasicDBObject("ObjectID", objectID));
+	        query.put("$and", obj);
 	    	result = collection.update(query, updateData);
-		} catch (MongoException e) {
+		}catch (MongoException e) {
 			e.printStackTrace();
 		}
-		return result.getN();
+    	return result.getN();
     }
+    
+//    public static int delete(String objectID, String newInstance){
+//    	if (db == null)
+//    		init();
+//    	WriteResult result = null;
+//		try{
+//	        DBCollection collection = db.getCollection("deviceStorage");
+//	        DBObject updateData = new BasicDBObject();
+//	        updateData.put("$unset", new BasicDBObject(newInstance, ""));
+//	        DBObject query = new BasicDBObject("ObjectID", objectID);
+//	    	result = collection.update(query, updateData);
+//		} catch (MongoException e) {
+//			e.printStackTrace();
+//		}
+//		return result.getN();
+//    }
     
 //	public static void main(String[] args){
 //		System.out.println(delete("0000000000010001", "Temperature"));

@@ -7,10 +7,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.bson.BasicBSONObject;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
@@ -135,6 +138,21 @@ public class ClientMongoDB {
 			e.printStackTrace();
 		}
     	return result.getN();
+    }
+    
+    public static String read(String objectID){
+    	String found = "";
+    	if (db == null)
+    		init();
+    	try{
+	    	DBCollection collection = db.getCollection("deviceStorage");
+	    	BasicDBObject query = new BasicDBObject("ObjectID", objectID);
+	    	DBCursor cursor = collection.find(query);
+	    	found = JSON.serialize(cursor);
+    	}catch (MongoException e) {
+			e.printStackTrace();
+		}
+    	return found;
     }
     
 //    public static int delete(String objectID, String newInstance){

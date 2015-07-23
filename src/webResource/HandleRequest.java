@@ -55,16 +55,16 @@ public class HandleRequest {
 
 	}
 	
-	@POST
-	@Path("Execute")
-	public Response Execute(String input){
-		String result = "";
-		try{
-			
-		}catch (Exception e){
-			e.printStackTrace();
-		}
-		return Response.status(201).entity(result).build();
-
-	}
+//	@POST
+//	@Path("Execute")
+//	public Response Execute(String input){
+//		String result = "";
+//		try{
+//			
+//		}catch (Exception e){
+//			e.printStackTrace();
+//		}
+//		return Response.status(201).entity(result).build();
+//
+//	}
 }

@@ -6,10 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.bson.BasicBSONObject;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -66,14 +62,15 @@ public class ClientMongoDB {
     	collection.insert(object);
     }
     
-    public static String search(String item){
+    public static String search(String objectID, String serialNumber){
     	String found = "";
     	if (db == null)
     		init();
     	
     	DBCollection collection = db.getCollection("deviceStorage");
-    	DBObject object = collection.findOne();
-    	found = ((BasicBSONObject) object).getString(item);
+    	BasicDBObject query = new BasicDBObject();
+    	List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
+    	obj.add(new BasicDBObject());
     	
     	return found;
     }
@@ -140,19 +137,19 @@ public class ClientMongoDB {
     	return result.getN();
     }
     
-    public static String read(String objectID){
-    	String found = "";
+    public static DBObject read(String objectID){
+    	DBCursor cursor = null;
     	if (db == null)
     		init();
     	try{
 	    	DBCollection collection = db.getCollection("deviceStorage");
 	    	BasicDBObject query = new BasicDBObject("ObjectID", objectID);
-	    	DBCursor cursor = collection.find(query);
-	    	found = JSON.serialize(cursor);
+	    	cursor = collection.find(query);
+//	    	found = JSON.serialize(cursor);
     	}catch (MongoException e) {
 			e.printStackTrace();
 		}
-    	return found;
+    	return cursor.next();
     }
     
     public static int write(String objectID, String instance, String field, String value){

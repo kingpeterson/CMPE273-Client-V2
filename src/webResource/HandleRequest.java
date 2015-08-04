@@ -9,6 +9,10 @@ import javax.ws.rs.core.Response;
 
 import org.json.JSONObject;
 
+import com.mongodb.BasicDBList;
+import com.mongodb.DBObject;
+import com.mongodb.util.JSON;
+
 import data.ClientMongoDB;
 
 
@@ -22,7 +26,7 @@ public class HandleRequest {
 		try{
 			JSONObject obj = new JSONObject(input);
 			String objectID = obj.getString("ObjectID");
-			result = ClientMongoDB.read(objectID);
+			result = JSON.serialize(ClientMongoDB.read(objectID));
 		}catch (Exception e){
 			e.printStackTrace();
 		}
@@ -36,6 +40,11 @@ public class HandleRequest {
 		try{
 			JSONObject obj = new JSONObject(input);
 			String objectID = obj.getString("ObjectID");
+			String instance = obj.getString("Instance");
+			String resourceID = obj.getString("Resource");
+			DBObject rsc = ClientMongoDB.read(objectID);
+			BasicDBList lst = (BasicDBList) rsc.get("Resource");
+
 		}catch (Exception e){
 			e.printStackTrace();
 		}
@@ -46,6 +55,7 @@ public class HandleRequest {
 	@Path("Write")
 	public Response Write(String input){
 		String result = "failed";
+		boolean observed = false;
 		try{
 			JSONObject obj = new JSONObject(input);
 			String objectID = obj.getString("ObjectID");
@@ -58,6 +68,12 @@ public class HandleRequest {
 		}catch (Exception e){
 			e.printStackTrace();
 		}
+		
+		//action for the device being observed on certain parameter
+		if (observed){
+			
+		}
+		
 		return Response.status(201).entity(result).build();
 	}
 	

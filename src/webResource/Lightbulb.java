@@ -13,15 +13,10 @@ import data.ClientMongoDB;
 
 public class Lightbulb {
 //	private static final String URN = "0000007-1234-4321-123456654321";
-	private static final String URI = "http://localhost:8080/CMPE273/webResource/ServerBootstrap/postClientInfo";
+	private static final String URI = "http://localhost:8080/CMPE273/webResource/BootstrapServer/postClientInfo";
 	private static final String serviceURI = "http://localhost:8080/CMPE273/webResource/Rest/postInfo";
-	private static String registerURI = "";
-	private static String updateURI = "";
-//	private static final int serverID = 0;
-//	private static final String objectID = "0000000000010001";
-//	private static final int objectInstanceID = 0000000000000011;
-//	private static final int resourceID = 0000000000000111;
-//	private static final int resourceInstanceID = 0000000000001111;
+	private static String registerURI = "http://localhost:8080/CMPE273/webResource/RegistrationServer/Register";
+	private static String updateURI = "http://localhost:8080/CMPE273/webResource/RegistrationServer/Update";
 	static boolean isBootstrap = false;
 	static String manufacturer = getManufacturer();
 	static String productType = getProductType();
@@ -143,7 +138,8 @@ public class Lightbulb {
 	
 	
 	public static void register(int myStatus){
-		registerURI = ClientMongoDB.search("registerURI");
+//		registerURI = ClientMongoDB.search(objectID, serialNumber);
+//		System.out.println(registerURI);
 		Client client = Client.create();
 		WebResource webResource = client.resource(registerURI);
 		String clientInfo = "{\"Manufacturer\": \""+manufacturer+"\", \"SerialNumber\": \""+serialNumber+"\", \"ObjectID\": \""+objectID+"\", \"Status\": \""+myStatus+"\"}";
@@ -186,7 +182,7 @@ public class Lightbulb {
 	}
 	
 	public static String update(String objectID, String newInstance, int status){
-		updateURI = ClientMongoDB.search("updateURI");
+//		updateURI = ClientMongoDB.search("updateURI");
 		Client client = Client.create();
 		WebResource webResource = client.resource(updateURI);
 		String clientInfo = "{\"ObjectID\": \""+objectID+"\", \"NewInstance\": \""+newInstance+"\", \"Status\": \""+status+"\"}";

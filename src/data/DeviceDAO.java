@@ -318,7 +318,7 @@ public class DeviceDAO {
         	updateData = (BasicDBObject) new BasicDBObject("$set", new BasicDBObject("Resource.$.Observed", "Y"));
 			status = collection.update(query, updateData);
 
-	        if(obj.getString("When").equals("=")){
+	        if(obj.getString("When").equals("!=")){
 	        	updateData = (BasicDBObject) new BasicDBObject("$set", new BasicDBObject("Resource.$.Step", "1"));
 	        }
 	        else if (obj.getString("When").equals(">")){

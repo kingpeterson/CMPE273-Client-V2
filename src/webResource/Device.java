@@ -44,29 +44,29 @@ public class Device {
 	
 	public static void bootstrap(String manufacturer, String model, String sn) throws JSONException{
 		JSONObject data = null;
-		JSONObject response = null;
+		String response = "";
 		JsonParser parser = new JsonParser();
 		try {
-			data = new JSONObject().put("Manufacturer", manufacturer).put("Model", model);
+			data = new JSONObject().put("Manufacturer", manufacturer).put("Model", model).put("SN", sn);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 		Client client = Client.create();
 		WebResource webResource = client.resource(bootstrapUri);
-		response = webResource.type(MediaType.APPLICATION_JSON).post(JSONObject.class, data);
+		response = webResource.type(MediaType.APPLICATION_JSON).post(String.class, data);
 		
-		registerUri = response.getString("ServiceProvider");
+//		registerUri = response.getString("ServiceProvider");
+		
 //		String serviceProvider = response.getString("ServiceProvider");
 //		JsonArray jsonObj = (JsonArray) parser.parse(serviceProvider);
 ////		registerUri = ((JsonObject)jsonObj.get(0)).get("Uri").getAsString();
 		
-		DeviceDAO.Connect();
-		DeviceDAO.insertDeviceData(manufacturer, model, sn, response);
-		
-		if ((DeviceDAO.insertDeviceData(manufacturer, model, sn, response) == 1))
-				System.out.println("Bootstrap completed!\n");
-		else
-			System.out.println("Bootstrap failed\n");
+//		DeviceDAO.Connect();
+//		
+//		if ((DeviceDAO.insertDeviceData(manufacturer, model, sn, response) == 1))
+//				System.out.println("Bootstrap completed!\n");
+//		else
+//			System.out.println("Bootstrap failed\n");
 
 	}
 	

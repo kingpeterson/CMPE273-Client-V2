@@ -42,6 +42,23 @@ public class ServerOnDevice {
 		return Device.getName()+"\n"+Device.getResource().toString()+"\n"+Device.getObservation().toString();
 	}
 	
+	@Path("/bootstrap")
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	public String bootstrap(JSONObject input){
+		String result = "";
+		DeviceDAO.Connect();
+		try {
+			if (DeviceDAO.insertDeviceData(input.getString("Manufacturer"), input.getString("Model"), "CMPE273AC001", input) == 1)
+				result = "Bootstrap completed!";
+			else
+				result = "Bootstrap failed";
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
 	@Path("/discover")
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
@@ -108,24 +125,36 @@ public class ServerOnDevice {
 		try {
 			if (readResult.getString("Observed").equals("Y")){
 				if (!readResult.getString("GreaterThan").equals("")){
-					if (Integer.parseInt(input.getString("Value")) > Integer.parseInt(readResult.getString("Value"))){
-						data = new JSONObject().put("Resource", input.getString("RscName")).put("Compare", ">").put("Value", input.getString("Value"));
+					if (Integer.parseInt(input.getString("Value")) > Integer.parseInt(readResult.getString("GreaterThan"))){
+						data = new JSONObject().put("Resource", input.getString("RscName")).put("Compare", ">").put("Value", input.getString("Value")).put("GreaterThan", readResult.getString("GreaterThan"));
+						Client client = Client.create();
+						WebResource webResource = client.resource(managerUrl+"notification");
+						String response = webResource.type(MediaType.APPLICATION_JSON).post(String.class, data);
+						System.out.println(response);
 					}
 				}
 				else if (!readResult.getString("LessThan").equals("")){
-					if (Integer.parseInt(input.getString("Value")) < Integer.parseInt(readResult.getString("Value"))){
-						data = new JSONObject().put("Resource", input.getString("RscName")).put("Compare", "<").put("Value", input.getString("Value"));
+					if (Integer.parseInt(input.getString("Value")) < Integer.parseInt(readResult.getString("LessThan"))){
+						data = new JSONObject().put("Resource", input.getString("RscName")).put("Compare", "<").put("Value", input.getString("Value")).put("Value", input.getString("Value")).put("LessThan", readResult.getString("LessThan"));
+						Client client = Client.create();
+						WebResource webResource = client.resource(managerUrl+"notification");
+						String response = webResource.type(MediaType.APPLICATION_JSON).post(String.class, data);
+						System.out.println(response);
 					}
 				}
 				else if (readResult.getString("Step").equals("1")){
 					if (!input.getString("Value").equals(readResult.getString("Value"))){
 						data = new JSONObject().put("Resource", input.getString("RscName")).put("Compare", "!=");
+						Client client = Client.create();
+						WebResource webResource = client.resource(managerUrl+"notification");
+						String response = webResource.type(MediaType.APPLICATION_JSON).post(String.class, data);
+						System.out.println(response);
 					}
 				}
-				Client client = Client.create();
-				WebResource webResource = client.resource(managerUrl+"notification");
-				String response = webResource.type(MediaType.APPLICATION_JSON).post(String.class, data);
-				System.out.println(response);
+//				Client client = Client.create();
+//				WebResource webResource = client.resource(managerUrl+"notification");
+//				String response = webResource.type(MediaType.APPLICATION_JSON).post(String.class, data);
+//				System.out.println(response);
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
